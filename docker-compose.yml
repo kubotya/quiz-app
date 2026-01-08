@@ -1,0 +1,37 @@
+version: "3.9"
+
+services:
+  quiz-api:
+    build: ./backend
+    container_name: quiz-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - ./frontend:/frontend
+    depends_on:
+      - db
+    restart: always
+
+  db:
+    image: mysql:8.0
+    container_name: quiz-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: quiz_db
+      MYSQL_USER: quizuser
+      MYSQL_PASSWORD: quizpass
+      MYSQL_ROOT_PASSWORD: rootpass
+      TZ: Asia/Tokyo
+    command:
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+
+volumes:
+  mysql_data:

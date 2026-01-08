@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>管理画面</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+
+<div id="app">
+  <h1>クイズ管理</h1>
+
+  <input v-model="form.question" placeholder="問題文"><br>
+  <input v-model="form.choice_a" placeholder="A"><br>
+  <input v-model="form.choice_b" placeholder="B"><br>
+  <input v-model="form.choice_c" placeholder="C"><br>
+  <input v-model="form.choice_d" placeholder="D"><br>
+  <input v-model="form.correct" placeholder="正解（A/B/C/D）"><br>
+
+  <button @click="createQuiz">追加</button>
+
+  <ul>
+    <li v-for="q in quizzes">
+      {{ q.question }}（正解：{{ q.correct }}）
+      <button @click="deleteQuiz(q.id)">削除</button>
+    </li>
+  </ul>
+</div>
+
+<script>
+const { createApp } = Vue;
+
+createApp({
+  data() {
+    return {
+      quizzes: [],
+      form: {
+        question: '',
+        choice_a: '',
+        choice_b: '',
+        choice_c: '',
+        choice_d: '',
+        correct: '',
+        type: 'choice'
+      }
+    }
+  },
+  mounted() {
+    this.load();
+  },
+  methods: {
+    load() {
+      axios.get('/api/admin/quizzes').then(r => this.quizzes = r.data);
+    },
+    createQuiz() {
+      axios.post('/api/admin/quizzes', null, { params: this.form })
+        .then(() => {
+          this.load();
+          this.form = {
+            question: '',
+            choice_a: '',
+            choice_b: '',
+            choice_c: '',
+            choice_d: '',
+            correct: '',
+            type: 'choice'
+          };
+        });
+    },
+    deleteQuiz(id) {
+      axios.delete(`/api/admin/quizzes/${id}`).then(this.load);
+    }
+  }
+}).mount('#app');
+</script>
+
+</body>
+</html>
