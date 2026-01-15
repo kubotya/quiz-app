@@ -18,11 +18,24 @@
   <input v-model="form.choice_d" placeholder="D"><br>
   <input v-model="form.correct" placeholder="正解（A/B/C/D）"><br>
 
+<<<<<<< HEAD
   <button @click="createQuiz">追加</button>
 
   <ul>
     <li v-for="q in quizzes">
       {{ q.question }}（正解：{{ q.correct }}）
+=======
+  <button v-if="!form.id" @click="createQuiz">追加</button>
+  <button v-if="form.id" @click="updateQuiz">更新</button>
+  <button v-if="form.id" @click="resetForm">キャンセル</button>
+
+  <hr>
+
+  <ul>
+    <li v-for="q in quizzes" :key="q.id">
+      {{ q.question }}（正解：{{ q.correct }}）
+      <button @click="editQuiz(q)">編集</button>
+>>>>>>> fc83315 (commit)
       <button @click="deleteQuiz(q.id)">削除</button>
     </li>
   </ul>
@@ -36,6 +49,10 @@ createApp({
     return {
       quizzes: [],
       form: {
+<<<<<<< HEAD
+=======
+        id: null,
+>>>>>>> fc83315 (commit)
         question: '',
         choice_a: '',
         choice_b: '',
@@ -51,12 +68,18 @@ createApp({
   },
   methods: {
     load() {
+<<<<<<< HEAD
       axios.get('/api/admin/quizzes').then(r => this.quizzes = r.data);
+=======
+      axios.get('/api/admin/quizzes')
+        .then(r => this.quizzes = r.data);
+>>>>>>> fc83315 (commit)
     },
     createQuiz() {
       axios.post('/api/admin/quizzes', null, { params: this.form })
         .then(() => {
           this.load();
+<<<<<<< HEAD
           this.form = {
             question: '',
             choice_a: '',
@@ -70,6 +93,37 @@ createApp({
     },
     deleteQuiz(id) {
       axios.delete(`/api/admin/quizzes/${id}`).then(this.load);
+=======
+          this.resetForm();
+        });
+    },
+    editQuiz(q) {
+      this.form = { ...q };
+    },
+    updateQuiz() {
+      axios.put(`/api/admin/quizzes/${this.form.id}`, null, {
+        params: this.form
+      }).then(() => {
+        this.load();
+        this.resetForm();
+      });
+    },
+    deleteQuiz(id) {
+      axios.delete(`/api/admin/quizzes/${id}`)
+        .then(() => this.load());
+    },
+    resetForm() {
+      this.form = {
+        id: null,
+        question: '',
+        choice_a: '',
+        choice_b: '',
+        choice_c: '',
+        choice_d: '',
+        correct: '',
+        type: 'choice'
+      };
+>>>>>>> fc83315 (commit)
     }
   }
 }).mount('#app');

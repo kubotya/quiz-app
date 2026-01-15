@@ -7,6 +7,10 @@ import random
 
 from database import engine, Base, SessionLocal
 from models import Quiz, Score
+<<<<<<< HEAD
+=======
+from fastapi import HTTPException
+>>>>>>> fc83315 (commit)
 
 # DB初期化
 Base.metadata.create_all(bind=engine)
@@ -87,6 +91,93 @@ def ranking(db: Session = Depends(get_db)):
     ]
 
 # --------------------
+<<<<<<< HEAD
+=======
+# 管理API
+# --------------------
+@app.get("/api/admin/quizzes")
+def get_quizzes(db: Session = Depends(get_db)):
+    quizzes = db.query(Quiz).all()
+    return [
+        {
+            "id": q.id,
+            "question": q.question,
+            "type": q.type,
+            "choice_a": q.choice_a,
+            "choice_b": q.choice_b,
+            "choice_c": q.choice_c,
+            "choice_d": q.choice_d,
+            "correct": q.correct,
+        }
+        for q in quizzes
+    ]
+
+
+@app.post("/api/admin/quizzes")
+def create_quiz(
+    question: str,
+    type: str,
+    choice_a: str,
+    choice_b: str,
+    choice_c: str,
+    choice_d: str,
+    correct: str,
+    db: Session = Depends(get_db)
+):
+    quiz = Quiz(
+        question=question,
+        type=type,
+        choice_a=choice_a,
+        choice_b=choice_b,
+        choice_c=choice_c,
+        choice_d=choice_d,
+        correct=correct,
+    )
+    db.add(quiz)
+    db.commit()
+    return {"result": "ok"}
+
+
+@app.delete("/api/admin/quizzes/{quiz_id}")
+def delete_quiz(quiz_id: int, db: Session = Depends(get_db)):
+    quiz = db.query(Quiz).get(quiz_id)
+    if not quiz:
+        raise HTTPException(status_code=404, detail="Quiz not found")
+
+    db.delete(quiz)
+    db.commit()
+    return {"result": "ok"}
+
+
+@app.put("/api/admin/quizzes/{quiz_id}")
+def update_quiz(
+    quiz_id: int,
+    question: str,
+    type: str,
+    choice_a: str,
+    choice_b: str,
+    choice_c: str,
+    choice_d: str,
+    correct: str,
+    db: Session = Depends(get_db)
+):
+    quiz = db.query(Quiz).get(quiz_id)
+    if not quiz:
+        raise HTTPException(status_code=404, detail="Quiz not found")
+
+    quiz.question = question
+    quiz.type = type
+    quiz.choice_a = choice_a
+    quiz.choice_b = choice_b
+    quiz.choice_c = choice_c
+    quiz.choice_d = choice_d
+    quiz.correct = correct
+
+    db.commit()
+    return {"result": "ok"}
+
+# --------------------
+>>>>>>> fc83315 (commit)
 # フロント配信
 # --------------------
 app.mount("/", StaticFiles(directory="/frontend", html=True), name="frontend")
