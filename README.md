@@ -2,4 +2,6 @@
 
 docker compose up --build
 
-http://localhost:8000
+クイズアプリ　http://localhost:8000
+
+クイズアプリの問題の追加　http://localhost:8000/admin.html
