@@ -9,3 +9,7 @@ docker compose up --buildでアプリを起動
 クイズアプリ　http://localhost:8000
 
 クイズアプリの問題の追加　http://localhost:8000/admin.html
+
+起動方法２
+
+http://10.96.22.183:8000/にアクセス（作成者が起動している場合に限る）
