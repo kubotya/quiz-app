@@ -1,4 +1,0 @@
-docker-compose up --buildで起動
-
-http://0.0.0.0:8000/index.htmlでクイズアプリ
-http://0.0.0.0:8000/admin.htmlでクイズ追加
