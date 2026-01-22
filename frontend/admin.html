@@ -2,132 +2,73 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>管理画面</title>
+  <title>クイズ管理システム</title>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <style>
+    body { font-family: sans-serif; max-width: 800px; margin: 20px auto; line-height: 1.6; }
+    .form-group { background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ddd; }
+    input, textarea { width: 100%; padding: 8px; margin: 5px 0 15px; box-sizing: border-box; }
+    button { padding: 10px 15px; cursor: pointer; border: none; border-radius: 4px; background: #007bff; color: white; }
+    button.delete { background: #dc3545; }
+    button.edit { background: #ffc107; color: black; }
+    button.cancel { background: #6c757d; }
+    .quiz-item { border-bottom: 1px solid #eee; padding: 15px 0; }
+  </style>
 </head>
 <body>
-
 <div id="app">
-  <h1>クイズ管理</h1>
+  <h1>クイズ管理画面</h1>
+  <div class="form-group">
+    <h2>{{ form.id ? 'クイズの編集' : '新しいクイズの追加' }}</h2>
+    <input v-model="form.question" placeholder="問題文">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+      <input v-model="form.choice_a" placeholder="選択肢 A">
+      <input v-model="form.choice_b" placeholder="選択肢 B">
+      <input v-model="form.choice_c" placeholder="選択肢 C">
+      <input v-model="form.choice_d" placeholder="選択肢 D">
+    </div>
+    <input v-model="form.correct" placeholder="正解ラベル (A/B/C/D)">
+    <textarea v-model="form.explanation" placeholder="解説文 (任意)"></textarea>
+    
+    <button v-if="!form.id" @click="saveQuiz">追加保存</button>
+    <template v-else>
+      <button @click="saveQuiz">更新する</button>
+      <button class="cancel" @click="resetForm">キャンセル</button>
+    </template>
+  </div>
 
-  <input v-model="form.question" placeholder="問題文"><br>
-  <input v-model="form.choice_a" placeholder="A"><br>
-  <input v-model="form.choice_b" placeholder="B"><br>
-  <input v-model="form.choice_c" placeholder="C"><br>
-  <input v-model="form.choice_d" placeholder="D"><br>
-  <input v-model="form.correct" placeholder="正解（A/B/C/D）"><br>
-
-<<<<<<< HEAD
-  <button @click="createQuiz">追加</button>
-
-  <ul>
-    <li v-for="q in quizzes">
-      {{ q.question }}（正解：{{ q.correct }}）
-=======
-  <button v-if="!form.id" @click="createQuiz">追加</button>
-  <button v-if="form.id" @click="updateQuiz">更新</button>
-  <button v-if="form.id" @click="resetForm">キャンセル</button>
-
-  <hr>
-
-  <ul>
-    <li v-for="q in quizzes" :key="q.id">
-      {{ q.question }}（正解：{{ q.correct }}）
-      <button @click="editQuiz(q)">編集</button>
->>>>>>> fc83315 (commit)
-      <button @click="deleteQuiz(q.id)">削除</button>
-    </li>
-  </ul>
+  <h2>登録済みクイズ一覧</h2>
+  <div v-for="q in quizzes" :key="q.id" class="quiz-item">
+    <strong>Q: {{ q.question }}</strong> (正解: {{ q.correct }})<br>
+    <small>解説: {{ q.explanation || '未設定' }}</small><br>
+    <button class="edit" @click="editQuiz(q)">編集</button>
+    <button class="delete" @click="deleteQuiz(q.id)">削除</button>
+  </div>
 </div>
 
 <script>
 const { createApp } = Vue;
-
 createApp({
   data() {
     return {
       quizzes: [],
-      form: {
-<<<<<<< HEAD
-=======
-        id: null,
->>>>>>> fc83315 (commit)
-        question: '',
-        choice_a: '',
-        choice_b: '',
-        choice_c: '',
-        choice_d: '',
-        correct: '',
-        type: 'choice'
-      }
+      form: { id: null, question: '', choice_a: '', choice_b: '', choice_c: '', choice_d: '', correct: '', explanation: '', type: 'choice' }
     }
   },
-  mounted() {
-    this.load();
-  },
+  mounted() { this.load(); },
   methods: {
-    load() {
-<<<<<<< HEAD
-      axios.get('/api/admin/quizzes').then(r => this.quizzes = r.data);
-=======
-      axios.get('/api/admin/quizzes')
-        .then(r => this.quizzes = r.data);
->>>>>>> fc83315 (commit)
+    load() { axios.get('/api/admin/quizzes').then(r => this.quizzes = r.data); },
+    saveQuiz() {
+      const method = this.form.id ? 'put' : 'post';
+      const url = this.form.id ? `/api/admin/quizzes/${this.form.id}` : '/api/admin/quizzes';
+      axios[method](url, null, { params: this.form }).then(() => { this.load(); this.resetForm(); });
     },
-    createQuiz() {
-      axios.post('/api/admin/quizzes', null, { params: this.form })
-        .then(() => {
-          this.load();
-<<<<<<< HEAD
-          this.form = {
-            question: '',
-            choice_a: '',
-            choice_b: '',
-            choice_c: '',
-            choice_d: '',
-            correct: '',
-            type: 'choice'
-          };
-        });
-    },
-    deleteQuiz(id) {
-      axios.delete(`/api/admin/quizzes/${id}`).then(this.load);
-=======
-          this.resetForm();
-        });
-    },
-    editQuiz(q) {
-      this.form = { ...q };
-    },
-    updateQuiz() {
-      axios.put(`/api/admin/quizzes/${this.form.id}`, null, {
-        params: this.form
-      }).then(() => {
-        this.load();
-        this.resetForm();
-      });
-    },
-    deleteQuiz(id) {
-      axios.delete(`/api/admin/quizzes/${id}`)
-        .then(() => this.load());
-    },
-    resetForm() {
-      this.form = {
-        id: null,
-        question: '',
-        choice_a: '',
-        choice_b: '',
-        choice_c: '',
-        choice_d: '',
-        correct: '',
-        type: 'choice'
-      };
->>>>>>> fc83315 (commit)
-    }
+    editQuiz(q) { this.form = { ...q }; },
+    deleteQuiz(id) { if(confirm('削除しますか？')) axios.delete(`/api/admin/quizzes/${id}`).then(this.load); },
+    resetForm() { this.form = { id: null, question: '', choice_a: '', choice_b: '', choice_c: '', choice_d: '', correct: '', explanation: '', type: 'choice' }; }
   }
 }).mount('#app');
 </script>
-
 </body>
 </html>

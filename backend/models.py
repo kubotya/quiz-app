@@ -14,6 +14,7 @@ class Quiz(Base):
     choice_d = Column(Text, nullable=False)
 
     correct = Column(String(1), nullable=False)  # A/B/C/D
+    explanation = Column(Text, nullable=True)     # 解説文
 
 class Score(Base):
     __tablename__ = "scores"
