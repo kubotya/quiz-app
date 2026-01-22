@@ -1,6 +1,10 @@
 起動方法
 
-docker compose up --build
+コードをローカルにダウンロードまたはクローン
+
+docker desktopを起動
+
+docker compose up --buildでアプリを起動
 
 クイズアプリ　http://localhost:8000
 
